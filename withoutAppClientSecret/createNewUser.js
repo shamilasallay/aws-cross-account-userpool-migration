@@ -5,7 +5,7 @@ const stsclient = new AWS.STS()
 
 const destinationAccountRoleARN = 'LAMBDAROLEARN';
 const destinationAccountRole = 'LAMBDAROLE';
-const destinationAccountUserPoolId = 'USERPOOLID';
+const destinationAccountUserPoolId = 'DESTINATIONUSERPOOLID';
 
 async function createNewUser(email, password) {
 
