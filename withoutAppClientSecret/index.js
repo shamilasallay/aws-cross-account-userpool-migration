@@ -5,18 +5,17 @@ const sourceAccountRoleARN = 'ROLEARN';
 const sourceAccountRegion = 'REGION';
 const sourceAccountUserPoolId = 'USERPOOLID';
 const sourceAccountClientId = 'APPCLIENTID';
-let cognitoidpclient;
+let cognitoIdpClient;
 
 exports.handler = async (event, context, callback) => {
-    console.log(event)
 
     let user;
 
-    var paramsAssumeRole = {
+    const paramsAssumeRole = {
         RoleArn: sourceAccountRoleARN,
         RoleSessionName: 'CrossAccountCognitoMigration'
     };
-    const { Credentials } = await stsclient.assumeRole(paramsAssumeRole).promise()
+    const { Credentials } = await stsclient.assumeRole(paramsAssumeRole).promise();
 
     const tempCredentialsObj = {
         accessKeyId: Credentials.AccessKeyId,
@@ -25,7 +24,7 @@ exports.handler = async (event, context, callback) => {
     }
 
     AWS.config.update({ credentials: tempCredentialsObj });
-    cognitoidpclient = new AWS.CognitoIdentityServiceProvider({ region: sourceAccountRegion });
+    cognitoIdpClient = new AWS.CognitoIdentityServiceProvider({ region: sourceAccountRegion });
 
     if (event.triggerSource == "UserMigration_Authentication") {
         // authenticate the user with your existing user directory service
@@ -71,7 +70,7 @@ exports.handler = async (event, context, callback) => {
             event.response.userAttributes = userAttributes;
 
             event.response.messageAction = "SUPPRESS"
-            context.succeed(event)
+            context.succeed(event);
         } else {
             // Return error to Amazon Cognito
             callback("Bad password")
@@ -89,8 +88,8 @@ async function getUserPoolUser(username) {
         Username: username
     }
 
-    res = await cognitoidpclient.adminGetUser(paramGetuser).promise()
-    return res
+    res = await cognitoIdpClient.adminGetUser(paramGetuser).promise();
+    return res;
 }
 
 async function authenticateUser(username, password) {
@@ -105,9 +104,9 @@ async function authenticateUser(username, password) {
         }
     }
 
-    const authres = await cognitoidpclient.adminInitiateAuth(paramInitiateAuth).promise()
+    const authres = await cognitoIdpClient.adminInitiateAuth(paramInitiateAuth).promise();
     if (authres.hasOwnProperty('AuthenticationResult')) {
-        res = getUserPoolUser(username)
+        res = getUserPoolUser(username);
     }
-    return res
+    return res;
 }
