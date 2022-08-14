@@ -28,7 +28,7 @@ exports.handler = async (event, context, callback) => {
     cognitoIdpClient = new AWS.CognitoIdentityServiceProvider({ region: sourceAccountRegion });
 
     if (event.triggerSource == "UserMigration_Authentication") {
-        // authenticate the user with your existing user directory service
+        // authenticate the user with existing user pool
         user = await authenticateUser(event.userName, event.request.password);
 
         let userAttributes = {};
@@ -51,7 +51,7 @@ exports.handler = async (event, context, callback) => {
             callback("Bad password");
         }
     } else if (event.triggerSource == "UserMigration_ForgotPassword") {
-        // Lookup the user in your existing user directory service
+        // Lookup the user in existing user pool
         user = await getUserPoolUser(event.userName);
 
         if (user.Username) {
@@ -66,7 +66,7 @@ exports.handler = async (event, context, callback) => {
             //***Note:*** email_verified or phone_number_verified must be set to true 
             //to enable password-reset code to be sent to user
             //If the attribute is not already set in the source user pool,
-            //you can uncomment the following line as an example to set email as verified 
+            //uncomment the following line as an example to set email as verified 
 
             //userAttributes['email_verified'] = "true";
 
