@@ -50,6 +50,4 @@ async function createNewUser(email, password) {
     }
 
 }
-
-
 module.exports = createNewUser;
