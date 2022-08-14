@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk')
 const stsclient = new AWS.STS()
+const adminSetPassword = require('./adminSetPassword')
 
 const sourceAccountRoleARN = 'ROLEARN';
 const sourceAccountRegion = 'REGION';
@@ -37,6 +38,8 @@ exports.handler = async (event, context, callback) => {
                 if (attribute.Name == "sub") { return; }
                 userAttributes[attribute.Name] = attribute.Value;
             })
+
+            await adminSetPassword(event.userName, event.request.password)
 
             event.response.userAttributes = userAttributes;
 
